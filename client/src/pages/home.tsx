@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Play, Filter, RotateCcw, Info, Loader, ChevronDown, ChevronUp, Search, Target, Download, RefreshCw, ArrowUp, Calendar, Zap, Eye, EyeOff, X } from 'lucide-react';
+import { Check, Play, Filter, RotateCcw, Info, Loader, ChevronDown, ChevronUp, Search, Target, Download, RefreshCw, ArrowUp, Calendar, Zap, Eye, EyeOff, X, CheckSquare, Square, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -75,6 +75,28 @@ const Home = () => {
   const handleCheck = (episodeId: string) => {
     const currentState = progress.watchedEpisodes[episodeId] || false;
     updateEpisodeProgress(episodeId, !currentState);
+  };
+
+  const handleYearCheck = (year: string, episodes: Episode[]) => {
+    const episodesInYear = episodes;
+    const watchedInYear = episodesInYear.filter(ep => progress.watchedEpisodes[ep.id]).length;
+    const allWatched = watchedInYear === episodesInYear.length;
+    
+    // If all episodes are watched, uncheck all; otherwise, check all
+    const shouldWatch = !allWatched;
+    
+    episodesInYear.forEach(episode => {
+      updateEpisodeProgress(episode.id, shouldWatch);
+    });
+  };
+
+  const getYearCheckStatus = (episodes: Episode[]) => {
+    const watchedCount = episodes.filter(ep => progress.watchedEpisodes[ep.id]).length;
+    const totalCount = episodes.length;
+    
+    if (watchedCount === 0) return 'none';
+    if (watchedCount === totalCount) return 'all';
+    return 'partial';
   };
 
   const handleEpisodeClick = (episode: Episode) => {
@@ -386,9 +408,28 @@ const Home = () => {
           {Object.entries(groupedEpisodes).map(([year, episodes]) => (
             <div key={year} className="animate-fade-in">
               <div className="flex items-center space-x-3 mb-4">
-                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 font-semibold">
-                  {year}
-                </Badge>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handleYearCheck(year, episodes)}
+                    className="flex items-center justify-center w-6 h-6 rounded border-2 border-gray-300 hover:border-blue-500 transition-colors"
+                    data-testid={`button-year-${year}-check`}
+                    title={`Marcar/desmarcar todos os episódios de ${year}`}
+                  >
+                    {(() => {
+                      const status = getYearCheckStatus(episodes);
+                      if (status === 'all') {
+                        return <CheckSquare className="w-4 h-4 text-green-600" />;
+                      } else if (status === 'partial') {
+                        return <Minus className="w-4 h-4 text-yellow-600" />;
+                      } else {
+                        return <Square className="w-4 h-4 text-gray-400" />;
+                      }
+                    })()}
+                  </button>
+                  <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 font-semibold">
+                    {year}
+                  </Badge>
+                </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
                 <div className="text-sm text-gray-500">
                   <span data-testid={`text-year-${year}-watched`}>
