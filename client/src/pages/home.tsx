@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Play, Filter, RotateCcw, Info, Loader, ChevronDown, ChevronUp, Search, Target, Download, RefreshCw, ArrowUp, Calendar, Zap, Eye, EyeOff, X, Tv } from 'lucide-react';
+import { Check, Play, Filter, RotateCcw, Info, Loader, ChevronDown, ChevronUp, Search, Target, Download, RefreshCw, ArrowUp, Calendar, Zap, Eye, EyeOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -455,13 +455,8 @@ const Home = () => {
                               </span>
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 truncate" data-testid={`text-episode-title-${episode.id}`}>
-                              {episode.titlePt || episode.title}
+                              {episode.title}
                             </h3>
-                            {episode.titlePt && (
-                              <p className="text-sm text-gray-500 italic" data-testid={`text-episode-original-title-${episode.id}`}>
-                                Título original: {episode.title}
-                              </p>
-                            )}
                             <p className="text-sm text-gray-600 mt-1" data-testid={`text-episode-date-${episode.id}`}>
                               {new Date(episode.airDate).toLocaleDateString('pt-BR', {
                                 day: 'numeric',
@@ -469,19 +464,6 @@ const Home = () => {
                                 year: 'numeric'
                               })}
                             </p>
-                            {episode.streaming && episode.streaming.length > 0 && (
-                              <div className="flex items-center space-x-1 mt-2" data-testid={`div-streaming-${episode.id}`}>
-                                <Tv className="w-4 h-4 text-gray-500" />
-                                <span className="text-sm text-gray-600">Disponível em:</span>
-                                <div className="flex flex-wrap gap-1">
-                                  {episode.streaming.map((platform, index) => (
-                                    <Badge key={index} variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                      {platform}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </div>
                         
