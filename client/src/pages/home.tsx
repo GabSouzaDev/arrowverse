@@ -404,9 +404,13 @@ const Home = () => {
                   <Card 
                     key={episode.id} 
                     className={`shadow-lg border transition-all duration-300 hover:shadow-xl overflow-hidden ${
-                      episode.isCrossover 
-                        ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-yellow-300 shadow-yellow-400/20' 
-                        : 'bg-white border-gray-100'
+                      progress.watchedEpisodes[episode.id] 
+                        ? episode.isCrossover 
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-green-400/20'
+                          : 'bg-gradient-to-r from-green-50 to-green-100 border-green-200 shadow-green-400/20'
+                        : episode.isCrossover 
+                          ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-yellow-300 shadow-yellow-400/20' 
+                          : 'bg-white border-gray-100'
                     }`}
                     data-testid={`card-episode-${episode.id}`}
                   >
