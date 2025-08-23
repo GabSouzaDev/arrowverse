@@ -39,16 +39,22 @@ const Home = () => {
     data: progress, 
     isLoading: progressLoading, 
     updateEpisodeProgress, 
-    updateProgressSummary,
     resetProgress: resetProgressAPI,
     isUpdating 
   } = useProgress();
   
   const checkedItems = progress.watchedEpisodes;
 
-  // Update progress summary when episodes change
-  useEffect(() => {
-    if (!progress.watchedEpisodes) return;
+  // Calculate progress values in real-time
+  const calculateCurrentProgress = () => {
+    if (!progress.watchedEpisodes) {
+      return {
+        totalWatched: 0,
+        totalEpisodes: getTotalEpisodes(),
+        crossoversWatched: 0,
+        currentStreak: 0
+      };
+    }
     
     const allEpisodes = getAllEpisodes();
     const crossoverEpisodes = getCrossoverEpisodes();
@@ -56,22 +62,15 @@ const Home = () => {
     const totalWatched = Object.values(progress.watchedEpisodes).filter(Boolean).length;
     const crossoversWatched = crossoverEpisodes.filter(ep => progress.watchedEpisodes[ep.id]).length;
     
-    const newSummary = {
+    return {
       totalWatched,
       totalEpisodes: allEpisodes.length,
       crossoversWatched,
-      currentStreak: progress.summary.currentStreak
+      currentStreak: progress.summary?.currentStreak || 0
     };
-    
-    // Only update if values have changed
-    if (
-      newSummary.totalWatched !== progress.summary.totalWatched ||
-      newSummary.crossoversWatched !== progress.summary.crossoversWatched ||
-      newSummary.totalEpisodes !== progress.summary.totalEpisodes
-    ) {
-      updateProgressSummary(newSummary);
-    }
-  }, [progress.watchedEpisodes, updateProgressSummary, progress.summary]);
+  };
+  
+  const currentProgress = calculateCurrentProgress();
 
   const handleCheck = (episodeId: string) => {
     const currentState = progress.watchedEpisodes[episodeId] || false;
@@ -187,7 +186,7 @@ const Home = () => {
 
   const filteredEpisodes = getFilteredEpisodes();
   const groupedEpisodes = groupEpisodesByYear(filteredEpisodes);
-  const progressPercentage = progress.summary.totalEpisodes > 0 ? (progress.summary.totalWatched / progress.summary.totalEpisodes) * 100 : 0;
+  const progressPercentage = currentProgress.totalEpisodes > 0 ? (currentProgress.totalWatched / currentProgress.totalEpisodes) * 100 : 0;
   
   if (progressLoading) {
     return (
@@ -252,11 +251,11 @@ const Home = () => {
               </Badge>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-blue-600" data-testid="text-watched">{progress.summary.totalWatched}</div>
+                  <div className="text-2xl font-bold text-blue-600" data-testid="text-watched">{currentProgress.totalWatched}</div>
                   <div className="text-sm text-gray-600">Assistidos</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-gray-600" data-testid="text-total">{progress.summary.totalEpisodes}</div>
+                  <div className="text-2xl font-bold text-gray-600" data-testid="text-total">{currentProgress.totalEpisodes}</div>
                   <div className="text-sm text-gray-600">Total</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
@@ -264,7 +263,7 @@ const Home = () => {
                   <div className="text-sm text-gray-600">Completo</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-purple-600" data-testid="text-crossovers">{progress.summary.crossoversWatched}</div>
+                  <div className="text-2xl font-bold text-purple-600" data-testid="text-crossovers">{currentProgress.crossoversWatched}</div>
                   <div className="text-sm text-gray-600">Crossovers</div>
                 </div>
               </div>
@@ -273,7 +272,7 @@ const Home = () => {
             <Progress value={progressPercentage} className="mb-4 h-4" data-testid="progress-bar" />
             
             <p className="text-center text-gray-600 text-sm">
-              <span data-testid="text-streak">{progress.summary.currentStreak} episódios</span> assistidos esta semana
+              <span data-testid="text-streak">{currentProgress.currentStreak} episódios</span> assistidos esta semana
               {isUpdating && <span className="ml-2 text-blue-600">• Sincronizando...</span>}
             </p>
           </CardContent>

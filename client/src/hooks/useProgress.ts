@@ -43,28 +43,18 @@ export function useProgress() {
       return response.json();
     },
     onSuccess: () => {
+      // Refresh only the progress data
       queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
     },
   });
 
   const updateSummaryMutation = useMutation({
     mutationFn: async (summary: Partial<ProgressSummary>) => {
-      const response = await fetch('/api/progress/summary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(summary),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update progress summary');
-      }
-      
-      return response.json();
+      // Don't make an API call for summary updates - it will be calculated client-side
+      return summary;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
+      // No need to invalidate queries for summary updates
     },
   });
 
@@ -90,7 +80,7 @@ export function useProgress() {
   };
 
   const updateProgressSummary = (summary: Partial<ProgressSummary>) => {
-    updateSummaryMutation.mutate(summary);
+    // This is now a no-op since we calculate summary client-side
   };
 
   const resetProgress = () => {
