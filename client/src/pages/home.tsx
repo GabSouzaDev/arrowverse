@@ -20,66 +20,62 @@ import {
   type Episode 
 } from '@/lib/arrowverse-data';
 import { 
-  loadProgress, 
-  saveProgress, 
   exportProgress, 
-  downloadFile,
-  type UserProgress,
-  type WatchedEpisodes 
+  downloadFile
 } from '@/lib/storage';
+import { useProgress } from '@/hooks/useProgress';
 
 const Home = () => {
-  const [checkedItems, setCheckedItems] = useState<WatchedEpisodes>({});
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedSeries, setSelectedSeries] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [progress, setProgress] = useState<UserProgress>({
-    watchedEpisodes: {},
-    lastUpdated: new Date().toISOString(),
-    totalWatched: 0,
-    totalEpisodes: getTotalEpisodes(),
-    crossoversWatched: 0,
-    currentStreak: 5
-  });
   const [expandedEpisode, setExpandedEpisode] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   const [quickFilter, setQuickFilter] = useState<string>('all');
   const { toast } = useToast();
+  
+  const { 
+    data: progress, 
+    isLoading: progressLoading, 
+    updateEpisodeProgress, 
+    updateProgressSummary,
+    resetProgress: resetProgressAPI,
+    isUpdating 
+  } = useProgress();
+  
+  const checkedItems = progress.watchedEpisodes;
 
-  // Load progress on mount
+  // Update progress summary when episodes change
   useEffect(() => {
-    const savedProgress = loadProgress();
-    setCheckedItems(savedProgress.watchedEpisodes);
-    setProgress(savedProgress);
-  }, []);
-
-  // Update progress when checkedItems changes
-  useEffect(() => {
+    if (!progress.watchedEpisodes) return;
+    
     const allEpisodes = getAllEpisodes();
     const crossoverEpisodes = getCrossoverEpisodes();
     
-    const totalWatched = Object.values(checkedItems).filter(Boolean).length;
-    const crossoversWatched = crossoverEpisodes.filter(ep => checkedItems[ep.id]).length;
+    const totalWatched = Object.values(progress.watchedEpisodes).filter(Boolean).length;
+    const crossoversWatched = crossoverEpisodes.filter(ep => progress.watchedEpisodes[ep.id]).length;
     
-    const newProgress: UserProgress = {
-      watchedEpisodes: checkedItems,
-      lastUpdated: new Date().toISOString(),
+    const newSummary = {
       totalWatched,
       totalEpisodes: allEpisodes.length,
       crossoversWatched,
-      currentStreak: 5 // This would be calculated based on recent activity
+      currentStreak: progress.summary.currentStreak
     };
     
-    setProgress(newProgress);
-    saveProgress(newProgress);
-  }, [checkedItems]);
+    // Only update if values have changed
+    if (
+      newSummary.totalWatched !== progress.summary.totalWatched ||
+      newSummary.crossoversWatched !== progress.summary.crossoversWatched ||
+      newSummary.totalEpisodes !== progress.summary.totalEpisodes
+    ) {
+      updateProgressSummary(newSummary);
+    }
+  }, [progress.watchedEpisodes, updateProgressSummary, progress.summary]);
 
   const handleCheck = (episodeId: string) => {
-    setCheckedItems(prev => ({
-      ...prev,
-      [episodeId]: !prev[episodeId]
-    }));
+    const currentState = progress.watchedEpisodes[episodeId] || false;
+    updateEpisodeProgress(episodeId, !currentState);
   };
 
   const handleEpisodeClick = (episode: Episode) => {
@@ -98,7 +94,7 @@ const Home = () => {
   };
 
   const resetProgress = () => {
-    setCheckedItems({});
+    resetProgressAPI();
     setExpandedEpisode(null);
     toast({
       title: "Progresso resetado",
@@ -107,17 +103,36 @@ const Home = () => {
   };
 
   const exportData = (format: 'json' | 'csv') => {
-    const content = exportProgress(format);
-    const filename = `arrowverse-progress-${new Date().toISOString().split('T')[0]}.${format}`;
-    const mimeType = format === 'json' ? 'application/json' : 'text/csv';
+    // Create a mock localStorage-style object for compatibility with exportProgress
+    const mockProgress = {
+      watchedEpisodes: progress.watchedEpisodes,
+      lastUpdated: progress.summary.lastUpdated,
+      totalWatched: progress.summary.totalWatched,
+      totalEpisodes: progress.summary.totalEpisodes,
+      crossoversWatched: progress.summary.crossoversWatched,
+      currentStreak: progress.summary.currentStreak
+    };
     
-    downloadFile(content, filename, mimeType);
-    setShowExportModal(false);
+    // Temporarily save to localStorage for export function
+    const tempKey = 'temp-arrowverse-progress';
+    localStorage.setItem(tempKey, JSON.stringify(mockProgress));
     
-    toast({
-      title: "Exportação concluída",
-      description: `Progresso exportado como ${format.toUpperCase()}.`,
-    });
+    try {
+      const content = exportProgress(format);
+      const filename = `arrowverse-progress-${new Date().toISOString().split('T')[0]}.${format}`;
+      const mimeType = format === 'json' ? 'application/json' : 'text/csv';
+      
+      downloadFile(content, filename, mimeType);
+      setShowExportModal(false);
+      
+      toast({
+        title: "Exportação concluída",
+        description: `Progresso exportado como ${format.toUpperCase()}.`,
+      });
+    } finally {
+      // Clean up temporary localStorage entry
+      localStorage.removeItem(tempKey);
+    }
   };
 
   const scrollToTop = () => {
@@ -151,9 +166,9 @@ const Home = () => {
     if (quickFilter === 'crossovers') {
       episodes = episodes.filter(ep => ep.isCrossover);
     } else if (quickFilter === 'watched') {
-      episodes = episodes.filter(ep => checkedItems[ep.id]);
+      episodes = episodes.filter(ep => progress.watchedEpisodes[ep.id]);
     } else if (quickFilter === 'unwatched') {
-      episodes = episodes.filter(ep => !checkedItems[ep.id]);
+      episodes = episodes.filter(ep => !progress.watchedEpisodes[ep.id]);
     }
 
     return episodes;
@@ -172,7 +187,18 @@ const Home = () => {
 
   const filteredEpisodes = getFilteredEpisodes();
   const groupedEpisodes = groupEpisodesByYear(filteredEpisodes);
-  const progressPercentage = progress.totalEpisodes > 0 ? (progress.totalWatched / progress.totalEpisodes) * 100 : 0;
+  const progressPercentage = progress.summary.totalEpisodes > 0 ? (progress.summary.totalWatched / progress.summary.totalEpisodes) * 100 : 0;
+  
+  if (progressLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 font-['Inter'] flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="animate-spin w-8 h-8 mx-auto mb-4" />
+          <p className="text-gray-600">Carregando seu progresso...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 font-['Inter']">
@@ -226,11 +252,11 @@ const Home = () => {
               </Badge>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-blue-600" data-testid="text-watched">{progress.totalWatched}</div>
+                  <div className="text-2xl font-bold text-blue-600" data-testid="text-watched">{progress.summary.totalWatched}</div>
                   <div className="text-sm text-gray-600">Assistidos</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-gray-600" data-testid="text-total">{progress.totalEpisodes}</div>
+                  <div className="text-2xl font-bold text-gray-600" data-testid="text-total">{progress.summary.totalEpisodes}</div>
                   <div className="text-sm text-gray-600">Total</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
@@ -238,7 +264,7 @@ const Home = () => {
                   <div className="text-sm text-gray-600">Completo</div>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="text-2xl font-bold text-purple-600" data-testid="text-crossovers">{progress.crossoversWatched}</div>
+                  <div className="text-2xl font-bold text-purple-600" data-testid="text-crossovers">{progress.summary.crossoversWatched}</div>
                   <div className="text-sm text-gray-600">Crossovers</div>
                 </div>
               </div>
@@ -247,7 +273,8 @@ const Home = () => {
             <Progress value={progressPercentage} className="mb-4 h-4" data-testid="progress-bar" />
             
             <p className="text-center text-gray-600 text-sm">
-              <span data-testid="text-streak">{progress.currentStreak} episódios</span> assistidos esta semana
+              <span data-testid="text-streak">{progress.summary.currentStreak} episódios</span> assistidos esta semana
+              {isUpdating && <span className="ml-2 text-blue-600">• Sincronizando...</span>}
             </p>
           </CardContent>
         </Card>
@@ -366,7 +393,7 @@ const Home = () => {
                 <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
                 <div className="text-sm text-gray-500">
                   <span data-testid={`text-year-${year}-watched`}>
-                    {episodes.filter(ep => checkedItems[ep.id]).length}
+                    {episodes.filter(ep => progress.watchedEpisodes[ep.id]).length}
                   </span> de <span data-testid={`text-year-${year}-total`}>
                     {episodes.length}
                   </span> episódios
@@ -396,7 +423,8 @@ const Home = () => {
                                   ? 'text-yellow-600 border-yellow-600 focus:ring-yellow-600' 
                                   : 'text-green-600 border-gray-300 focus:ring-green-600'
                               }`}
-                              checked={checkedItems[episode.id] || false}
+                              checked={progress.watchedEpisodes[episode.id] || false}
+                              disabled={isUpdating}
                               onChange={() => handleCheck(episode.id)}
                               data-testid={`checkbox-episode-${episode.id}`}
                             />
