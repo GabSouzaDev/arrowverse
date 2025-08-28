@@ -1,14 +1,13 @@
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
-}
+const DATABASE_URL = process.env.DATABASE_URL || 
+  `postgresql://postgres:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpZnFobnR2b3didnd3Z3JsbmduIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjM0Mzg3MSwiZXhwIjoyMDcxOTE5ODcxfQ.vJ_C3qd5KFVI5EuSBZxJ7rF9KmhRisr4YUwXEA0-FUo@db.iifqhntvowbvwwgrlngn.supabase.co:5432/postgres`;
 
 export default defineConfig({
   out: "./migrations",
   schema: "./shared/schema.ts",
-  dialect: "postgresql",
+  dialect: "postgresql", 
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: DATABASE_URL,
   },
 });
