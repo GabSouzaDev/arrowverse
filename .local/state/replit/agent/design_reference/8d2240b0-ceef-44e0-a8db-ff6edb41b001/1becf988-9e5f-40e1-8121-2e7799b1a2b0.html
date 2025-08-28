@@ -1,0 +1,573 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrowverse Checklist - Ordem Cronológica Completa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'dc-blue': '#1e40af',
+                        'dc-green': '#059669',
+                        'dc-purple': '#7c3aed',
+                        'dc-gold': '#f59e0b',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(30, 64, 175, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(30, 64, 175, 0.8); }
+        }
+        .crossover-glow {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 min-h-screen">
+    <!-- @COMPONENT: Header -->
+    <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-dc-blue to-dc-green rounded-lg flex items-center justify-center">
+                        <i data-lucide="play" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">Arrowverse Checklist</h1>
+                        <p class="text-xs text-gray-500">Ordem cronológica oficial</p>
+                    </div>
+                </div>
+                
+                <!-- @COMPONENT: HeaderActions -->
+                <div class="flex items-center space-x-3">
+                    <button data-event="click:exportProgress" class="hidden sm:flex items-center space-x-2 px-4 py-2 bg-dc-green text-white rounded-lg hover:bg-green-600 transition-colors">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Exportar</span>
+                    </button>
+                    <button data-event="click:resetProgress" class="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- @COMPONENT: ProgressSection -->
+        <div class="mb-8 animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-xl p-6 lg:p-8 border border-gray-100">
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center space-x-2 bg-gradient-to-r from-dc-blue to-dc-purple text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>Progresso Geral</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="text-2xl font-bold text-dc-blue" data-bind="progress.watched">127</div>
+                            <div class="text-sm text-gray-600">Assistidos</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="text-2xl font-bold text-gray-600" data-bind="progress.total">436</div>
+                            <div class="text-sm text-gray-600">Total</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="text-2xl font-bold text-dc-green" data-bind="progress.percentage">29%</div>
+                            <div class="text-sm text-gray-600">Completo</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="text-2xl font-bold text-dc-purple" data-bind="progress.crossovers">18</div>
+                            <div class="text-sm text-gray-600">Crossovers</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="bg-gray-200 rounded-full h-4 overflow-hidden mb-4">
+                    <div class="h-full bg-gradient-to-r from-dc-blue via-dc-purple to-dc-green transition-all duration-1000 ease-out"
+                         style="width: 29%" data-bind="progressBar.width"></div>
+                </div>
+                
+                <p class="text-center text-gray-600 text-sm">
+                    <span data-bind="currentStreak">5 episódios</span> assistidos esta semana
+                </p>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProgressSection -->
+
+        <!-- @COMPONENT: FilterControls -->
+        <div class="mb-8 animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Search -->
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Buscar episódio</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   placeholder="Digite o nome da série ou episódio..."
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dc-blue focus:border-transparent transition-all"
+                                   data-event="input:handleSearch">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Year Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ano</label>
+                        <select class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dc-blue focus:border-transparent transition-all"
+                                data-event="change:handleYearFilter" data-bind="filters.year">
+                            <option value="all">Todos os anos</option>
+                            <option value="2012">2012</option>
+                            <option value="2013">2013</option>
+                            <option value="2014" selected>2014</option>
+                            <option value="2015">2015</option>
+                            <option value="2016">2016</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Series Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Série</label>
+                        <select class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dc-blue focus:border-transparent transition-all"
+                                data-event="change:handleSeriesFilter" data-bind="filters.series">
+                            <option value="all">Todas as séries</option>
+                            <option value="Arrow">Arrow</option>
+                            <option value="The Flash">The Flash</option>
+                            <option value="Supergirl">Supergirl</option>
+                            <option value="Constantine">Constantine</option>
+                            <option value="DC Legends of Tomorrow">DC Legends of Tomorrow</option>
+                            <option value="Black Lightning">Black Lightning</option>
+                            <option value="Batwoman">Batwoman</option>
+                            <option value="Superman & Lois">Superman & Lois</option>
+                            <option value="Stargirl">Stargirl</option>
+                            <option value="Vixen">Vixen</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Quick Filters -->
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-3 py-1 bg-dc-gold/10 text-dc-gold rounded-full text-sm hover:bg-dc-gold/20 transition-colors"
+                                data-event="click:filterCrossovers">
+                            <i data-lucide="zap" class="w-3 h-3 inline mr-1"></i>
+                            Apenas Crossovers
+                        </button>
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                                data-event="click:filterUnwatched">
+                            <i data-lucide="eye-off" class="w-3 h-3 inline mr-1"></i>
+                            Não assistidos
+                        </button>
+                        <button class="px-3 py-1 bg-dc-green/10 text-dc-green rounded-full text-sm hover:bg-dc-green/20 transition-colors"
+                                data-event="click:filterWatched">
+                            <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>
+                            Assistidos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: FilterControls -->
+
+        <!-- @COMPONENT: EpisodeList -->
+        <div class="space-y-6">
+            <!-- @MAP: years.map(year => ( -->
+            <div class="animate-fade-in">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="bg-gradient-to-r from-dc-blue to-dc-purple text-white px-4 py-2 rounded-lg font-semibold">
+                        <span data-bind="year">2014</span>
+                    </div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+                    <div class="text-sm text-gray-500">
+                        <span data-bind="yearStats.watched">12</span> de <span data-bind="yearStats.total">35</span> episódios
+                    </div>
+                </div>
+
+                <div class="grid gap-4">
+                    <!-- @MAP: episodes.map(episode => ( -->
+                    <!-- Regular Episode Card -->
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden"
+                         data-episode-id="arrow-s02e10" data-mock="true">
+                        <div class="p-4 sm:p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 flex-1">
+                                    <!-- Checkbox -->
+                                    <div class="relative">
+                                        <input type="checkbox" 
+                                               class="w-5 h-5 text-dc-green border-2 border-gray-300 rounded focus:ring-dc-green focus:ring-2 cursor-pointer"
+                                               data-event="change:handleEpisodeCheck"
+                                               data-bind="episode.watched">
+                                        <div class="absolute inset-0 pointer-events-none">
+                                            <i data-lucide="check" class="w-3 h-3 text-white absolute top-0.5 left-0.5 hidden"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Episode Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Arrow
+                                            </span>
+                                            <span class="text-sm text-gray-500" data-bind="episode.code">S02E10</span>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900 truncate" data-bind="episode.title">
+                                            Blast Radius
+                                        </h3>
+                                        <p class="text-sm text-gray-600 mt-1" data-bind="episode.date">
+                                            15 de Janeiro, 2014
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="flex items-center space-x-2">
+                                    <button class="p-2 text-gray-400 hover:text-dc-blue transition-colors"
+                                            data-event="click:toggleEpisodeDetails"
+                                            data-implementation="Toggle episode details panel">
+                                        <i data-lucide="info" class="w-4 h-4"></i>
+                                    </button>
+                                    <button class="p-2 text-gray-400 hover:text-dc-blue transition-colors"
+                                            data-event="click:expandEpisode">
+                                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Episode Details (Expandable) -->
+                            <div class="mt-4 pt-4 border-t border-gray-100 hidden" data-component="EpisodeDetails">
+                                <div class="prose prose-sm max-w-none">
+                                    <p class="text-gray-700" data-bind="episode.summary">
+                                        Oliver continues his mission to clean up the city while dealing with family and personal relationships. A new threat emerges that challenges his methods as the Hood.
+                                    </p>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <span>⏱️ 42 min</span>
+                                        <span>📺 The CW</span>
+                                        <span>⭐ 8.2/10</span>
+                                    </div>
+                                    <button class="text-dc-blue hover:text-dc-purple transition-colors text-sm font-medium"
+                                            data-event="click:viewOnIMDB">
+                                        Ver no IMDb →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Crossover Episode Card -->
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl shadow-lg border-2 border-dc-gold/30 hover:shadow-xl transition-all duration-300 overflow-hidden crossover-glow"
+                         data-episode-id="flash-arrow-crossover" data-mock="true">
+                        <div class="p-4 sm:p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 flex-1">
+                                    <!-- Checkbox -->
+                                    <div class="relative">
+                                        <input type="checkbox" 
+                                               class="w-5 h-5 text-dc-gold border-2 border-dc-gold rounded focus:ring-dc-gold focus:ring-2 cursor-pointer"
+                                               data-event="change:handleEpisodeCheck"
+                                               checked>
+                                    </div>
+                                    
+                                    <!-- Episode Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-dc-gold text-white">
+                                                <i data-lucide="zap" class="w-3 h-3 mr-1"></i>
+                                                Crossover
+                                            </span>
+                                            <span class="text-sm text-amber-700">The Flash S01E08 + Arrow S03E08</span>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900" data-bind="episode.title">
+                                            Flash vs Arrow - Crossover Parte 1 & 2
+                                        </h3>
+                                        <p class="text-sm text-amber-700 mt-1" data-bind="episode.date">
+                                            2-9 de Dezembro, 2014
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="flex items-center space-x-2">
+                                    <button class="p-2 text-amber-600 hover:text-dc-gold transition-colors"
+                                            data-event="click:toggleEpisodeDetails">
+                                        <i data-lucide="info" class="w-4 h-4"></i>
+                                    </button>
+                                    <button class="p-2 text-amber-600 hover:text-dc-gold transition-colors"
+                                            data-event="click:expandEpisode">
+                                        <i data-lucide="chevron-up" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Crossover Details (Expanded) -->
+                            <div class="mt-4 pt-4 border-t border-amber-200" data-component="CrossoverDetails">
+                                <div class="prose prose-sm max-w-none">
+                                    <p class="text-gray-700" data-bind="episode.summary">
+                                        O primeiro grande crossover entre The Flash e Arrow! Barry Allen e Oliver Queen se encontram pela primeira vez quando Barry viaja para Starling City. Este evento épico estabelece a base para futuros crossovers do Arrowverse.
+                                    </p>
+                                </div>
+                                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="bg-white/50 rounded-lg p-3">
+                                        <h4 class="font-medium text-gray-900 mb-2">The Flash S01E08</h4>
+                                        <p class="text-sm text-gray-600">"Flash vs Arrow" - Primeira parte do crossover</p>
+                                    </div>
+                                    <div class="bg-white/50 rounded-lg p-3">
+                                        <h4 class="font-medium text-gray-900 mb-2">Arrow S03E08</h4>
+                                        <p class="text-sm text-gray-600">"The Brave and the Bold" - Segunda parte</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4 text-sm text-amber-700">
+                                        <span>⏱️ 84 min total</span>
+                                        <span>📺 The CW</span>
+                                        <span>⭐ 9.1/10</span>
+                                    </div>
+                                    <button class="text-dc-blue hover:text-dc-purple transition-colors text-sm font-medium"
+                                            data-event="click:viewCrossoverGuide">
+                                        Guia do Crossover →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Episode Card -->
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-pulse"
+                         data-mock="true" data-loading="true">
+                        <div class="p-4 sm:p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 flex-1">
+                                    <div class="w-5 h-5 bg-gray-200 rounded"></div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <div class="w-16 h-5 bg-gray-200 rounded"></div>
+                                            <div class="w-12 h-4 bg-gray-200 rounded"></div>
+                                        </div>
+                                        <div class="w-48 h-6 bg-gray-200 rounded mb-1"></div>
+                                        <div class="w-32 h-4 bg-gray-200 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 bg-gray-200 rounded"></div>
+                                    <div class="w-8 h-8 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+        </div>
+        <!-- @END_COMPONENT: EpisodeList -->
+
+        <!-- @COMPONENT: FloatingActions -->
+        <div class="fixed bottom-6 right-6 z-40">
+            <div class="flex flex-col space-y-3">
+                <!-- Export Button -->
+                <button class="w-12 h-12 bg-dc-green text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+                        data-event="click:exportProgress"
+                        title="Exportar progresso">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                </button>
+                
+                <!-- Sync Button -->
+                <button class="w-12 h-12 bg-dc-purple text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+                        data-event="click:syncProgress"
+                        title="Sincronizar dados">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
+                
+                <!-- Back to Top -->
+                <button class="w-12 h-12 bg-dc-blue text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+                        data-event="click:scrollToTop"
+                        title="Voltar ao topo">
+                    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: FloatingActions -->
+    </div>
+
+    <!-- @COMPONENT: ExportModal -->
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden" data-component="ExportModal" data-mock="true">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-up">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-dc-green to-dc-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="download" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Exportar Progresso</h3>
+                    <p class="text-gray-600">Escolha o formato para exportar seu progresso</p>
+                </div>
+
+                <div class="space-y-3 mb-6">
+                    <button class="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-dc-blue transition-colors text-left"
+                            data-event="click:exportJSON">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="file-text" class="w-5 h-5 text-gray-400"></i>
+                            <div>
+                                <div class="font-medium">JSON</div>
+                                <div class="text-sm text-gray-500">Dados estruturados para backup</div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button class="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-dc-blue transition-colors text-left"
+                            data-event="click:exportCSV">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="table" class="w-5 h-5 text-gray-400"></i>
+                            <div>
+                                <div class="font-medium">CSV</div>
+                                <div class="text-sm text-gray-500">Planilha para análise</div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button class="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-dc-blue transition-colors text-left"
+                            data-event="click:exportPDF">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="file-image" class="w-5 h-5 text-gray-400"></i>
+                            <div>
+                                <div class="font-medium">PDF</div>
+                                <div class="text-sm text-gray-500">Relatório completo</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            data-event="click:closeModal">
+                        Cancelar
+                    </button>
+                    <button class="flex-1 px-4 py-2 bg-dc-blue text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            data-event="click:exportAll">
+                        Exportar Todos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ExportModal -->
+
+    <!-- @STATE: checkedItems:object = {} -->
+    <!-- @STATE: selectedYear:string = 'all' -->
+    <!-- @STATE: selectedSeries:string = 'all' -->
+    <!-- @STATE: searchQuery:string = '' -->
+    <!-- @STATE: expandedEpisode:string = null -->
+    <!-- @STATE: showExportModal:boolean = false -->
+
+    <!-- @FUNCTIONALITY: This application should implement localStorage persistence for user progress -->
+    <!-- @FUNCTIONALITY: Episode details should be fetched from a mock API or local data source -->
+    <!-- @FUNCTIONALITY: Export functionality should generate actual files for download -->
+    <!-- @FUNCTIONALITY: Crossover episodes should have special styling and behavior -->
+
+    <script>
+        // TODO: Implement React component logic
+        // TODO: Add localStorage persistence
+        // TODO: Implement search and filtering functionality
+        // TODO: Add export functionality
+        // TODO: Implement progress tracking and statistics
+        
+        (() => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Mock functionality for demonstration
+            function initializeMockInteractions() {
+                // Animate progress bar on load
+                const progressBar = document.querySelector('[data-bind="progressBar.width"]');
+                if (progressBar) {
+                    setTimeout(() => {
+                        progressBar.style.width = '29%';
+                    }, 500);
+                }
+                
+                // Add click handlers for demonstration
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('[data-event*="expandEpisode"]')) {
+                        const card = e.target.closest('[data-episode-id]');
+                        const details = card.querySelector('[data-component*="Details"]');
+                        const icon = e.target.closest('button').querySelector('i');
+                        
+                        if (details) {
+                            details.classList.toggle('hidden');
+                            icon.setAttribute('data-lucide', 
+                                details.classList.contains('hidden') ? 'chevron-down' : 'chevron-up'
+                            );
+                            lucide.createIcons();
+                        }
+                    }
+                    
+                    if (e.target.closest('[data-event*="scrollToTop"]')) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    
+                    if (e.target.closest('[data-event*="exportProgress"]')) {
+                        const modal = document.querySelector('[data-component="ExportModal"]');
+                        if (modal) {
+                            modal.classList.remove('hidden');
+                        }
+                    }
+                    
+                    if (e.target.closest('[data-event*="closeModal"]')) {
+                        const modal = document.querySelector('[data-component="ExportModal"]');
+                        if (modal) {
+                            modal.classList.add('hidden');
+                        }
+                    }
+                });
+                
+                // Add scroll effect for header
+                window.addEventListener('scroll', () => {
+                    const header = document.querySelector('.sticky');
+                    if (window.scrollY > 50) {
+                        header.style.background = 'rgba(255, 255, 255, 0.95)';
+                    } else {
+                        header.style.background = 'rgba(255, 255, 255, 0.9)';
+                    }
+                });
+            }
+            
+            // Initialize on load
+            document.addEventListener('DOMContentLoaded', initializeMockInteractions);
+            if (document.readyState !== 'loading') {
+                initializeMockInteractions();
+            }
+        })();
+    </script>
+</body>
+</html>
